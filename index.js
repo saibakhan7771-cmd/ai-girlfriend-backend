@@ -13,6 +13,7 @@ app.get("/", (req, res) => {
 });
 
 // Chat route using GROQ (FREE)
+
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -35,6 +36,31 @@ app.post("/chat", async (req, res) => {
         ]
       },
       {
+        headers: {
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        },
+        timeout: 20000
+      }
+    );
+
+    console.log("GROQ RAW:", response.data);
+
+    if (!response.data.choices || !response.data.choices[0]) {
+      return res.json({ reply: "Baby thoda confuse ho gayi 😅" });
+    }
+
+    res.json({
+      reply: response.data.choices[0].message.content
+    });
+
+  } catch (error) {
+    console.error("FULL ERROR:", error.response?.data || error.message);
+    res.json({
+      reply: "Baby thoda network issue ho gaya 😢"
+    });
+  }
+});
         headers: {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json"
