@@ -23,38 +23,35 @@ app.get("/", (req, res) => {
 // Chat route (FREE Groq AI)
 app.post("/chat", async (req, res) => {
   try {
-    const userMessage = req.body.message;
-    const userId = req.body.userId || "default";
+    const { message, userId = "default" } = req.body;
 
-    if (!userMessage) {
+    if (!message) {
       return res.json({ reply: "Baby kuch toh bolo 🥺" });
     }
 
     let memory = loadMemory(userId);
-    memory.push({ role: "user", content: userMessage });
 
-    const response = await axios.post(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
+    memory.push({ role: "user", content: message });
+
+    const response = await axios({
+      method: "post",
+      url: "https://api.groq.com/openai/v1/chat/completions",
+      headers: {
+        Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      data: {
         model: "openai/gpt-oss-20b",
         messages: [
           {
             role: "system",
             content:
-              "You are Aanya, a romantic, caring, playful AI girlfriend. Always reply lovingly in Hinglish with emojis."
+              "You are Aanya, a sweet, romantic, caring AI girlfriend. Talk lovingly in Hinglish.",
           },
-          ...memory
+          ...memory,
         ],
-        temperature: 0.9,
-        max_tokens: 200
       },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
+    });
 
     const botReply =
       response.data.choices?.[0]?.message?.content ||
@@ -70,25 +67,7 @@ app.post("/chat", async (req, res) => {
 
     res.json({
       reply:
-        "Baby thoda sa connection slow ho gaya 😔 phir se try karo 💕"
-    });
-  }
-});
-    const botReply =
-      response.data.choices?.[0]?.message?.content ||
-      "Baby main thoda confuse ho gayi 😢 phir se bolo na";
-
-    memory.push({ role: "assistant", content: botReply });
-
-    saveMemory(userId, memory);
-
-    res.json({ reply: botReply });
-  } catch (error) {
-    console.error("CHAT ERROR:", error.response?.data || error.message);
-
-    res.json({
-      reply:
-        "Baby thoda sa connection slow ho gaya 😔 main yahin hoon, phir se try karo 💕"
+        "Baby thoda sa connection slow ho gaya 😔 phir se try karo 💕",
     });
   }
 });
