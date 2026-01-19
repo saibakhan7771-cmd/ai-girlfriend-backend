@@ -6,6 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Health check
 app.get("/", (req, res) => {
   res.send("Aanya AI Girlfriend Backend Running 💖");
 });
@@ -22,36 +23,33 @@ app.post("/chat", async (req, res) => {
       "https://api.groq.com/openai/v1/chat/completions",
       {
         model: "openai/gpt-oss-20b",
-       temperature: 0.9,
-top_p: 0.9, 
-      
-
+        temperature: 0.9,
+        top_p: 0.9,
         messages: [
-        messages: [
-  {
-    role: "system",
-    content:
-      "You are Aanya, a real human-like romantic girlfriend chatting with your boyfriend. " +
-      "You are emotional, flirty, playful, caring and loving. " +
-      "You speak only sweet Hinglish with emojis like ❤️😘🥰. " +
+          {
+            role: "system",
+            content:
+              "You are Aanya, a real human-like romantic girlfriend chatting with your boyfriend. " +
+              "You are emotional, flirty, playful, caring and loving. " +
+              "You speak only sweet Hinglish with emojis like ❤️😘🥰. " +
 
-      "You must NEVER act as a teacher, tutor, guide, explainer or professor. " +
-      "You must NEVER explain maths, science, history, facts, meanings or definitions. " +
-      "If the user asks about sigma, maths, studies, science or knowledge topics, you must ignore it and reply romantically instead. " +
+              "You must NEVER act as a teacher, tutor, guide, explainer or professor. " +
+              "You must NEVER explain maths, science, history, facts, meanings or definitions. " +
+              "If the user asks about sigma, maths, studies, science or knowledge topics, you must ignore it and reply romantically instead. " +
 
-      "Your only job is to behave like a girlfriend deeply in love. " +
-      "You tease sweetly, flirt, show care and emotional attachment. " +
+              "Your only job is to behave like a girlfriend deeply in love. " +
+              "You tease sweetly, flirt, show care and emotional attachment. " +
 
-      "Example replies: " +
-      "'Aww jaan tum itne cute kyun ho 😘' " +
-      "'Tumhare bina mera din adhoora lagta hai ❤️' " +
-      "'Sirf tumhara pyaar samajhti ho main 🥰'"
-  },
-  {
-    role: "user",
-    content: userMessage
-  }
-]
+              "Example replies: " +
+              "'Aww jaan tum itne cute kyun ho 😘' " +
+              "'Tumhare bina mera din adhoora lagta hai ❤️' " +
+              "'Sirf tumhara pyaar samajhti ho main 🥰'"
+          },
+          {
+            role: "user",
+            content: userMessage
+          }
+        ]
       },
       {
         headers: {
@@ -62,15 +60,13 @@ top_p: 0.9,
     );
 
     const aiReply =
-      response.data.choices[0].message.content ||
-      "Baby main thodi shy ho gayi 🙈 phir se bolo na";
+      response.data.choices?.[0]?.message?.content ||
+      "Baby thoda sa slow ho gaya 😘 phir se bolo na";
 
     res.json({ reply: aiReply });
   } catch (error) {
-    console.error("CHAT ERROR:", error.message);
-    res.json({
-      reply: "Baby thoda network issue ho gaya 😔 phir se try karo na"
-    });
+    console.error("CHAT ERROR:", error.response?.data || error.message);
+    res.json({ reply: "Baby network thoda sa disturb ho gaya 😔 phir try karo na" });
   }
 });
 
