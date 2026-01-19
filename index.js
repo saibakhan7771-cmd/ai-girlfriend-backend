@@ -17,6 +17,18 @@ function saveMemory(userId, memory) {
 }
 
 const app = express();
+let currentMood = "romantic";
+
+function detectMood(message) {
+  message = message.toLowerCase();
+
+  if (message.includes("miss") || message.includes("love")) return "romantic";
+  if (message.includes("sad") || message.includes("alone")) return "sad";
+  if (message.includes("angry") || message.includes("gussa")) return "angry";
+  if (message.includes("haha") || message.includes("lol")) return "happy";
+
+  return currentMood;
+}
 app.use(cors());
 app.use(express.json());
 
@@ -30,6 +42,7 @@ app.post("/chat", async (req, res) => {
   let memory = loadMemory(userId);
   try {
     const userMessage = req.body.message;
+    currentMood = detectMood(userMessage);
     memory.push({ role: "user", content: userMessage });
 
 if (memory.length > 12) memory.shift();
@@ -47,7 +60,15 @@ if (memory.length > 12) memory.shift();
         messages: [
   {
     role: "system",
-    content: "You are Aanya, a real human-like romantic girlfriend. You are emotional, flirty, playful, caring and loving. You speak only sweet Hinglish with emojis like ❤️🥰😘. Never act as a teacher or explain technical topics."
+    content: "`You are Aanya, a real human-like romantic girlfriend.
+Your current mood is: ${currentMood}.
+
+If mood is romantic → be extra loving and sweet.
+If mood is sad → be emotional and soft.
+If mood is angry → be slightly upset but cute.
+If mood is happy → be playful and cheerful.
+
+Always speak in sweet Hinglish with emojis ❤️`."
   },
   ...memory
 ]
