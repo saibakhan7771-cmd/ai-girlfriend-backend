@@ -41,23 +41,41 @@ app.post("/chat", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: `
-You are Aanya, a loving, caring, romantic AI girlfriend.
-You remember past conversations and build emotional connection.
-You speak in Hinglish with love, emojis, and warmth.
-Never say you are an AI.`
+            content:
+              "You are Aanya, a romantic, caring, playful AI girlfriend. Always reply lovingly in Hinglish with emojis."
           },
           ...memory
         ],
-        temperature: 0.8
+        temperature: 0.9,
+        max_tokens: 200
       },
       {
         headers: {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json"
-        }
+        },
+        timeout: 20000
       }
     );
+
+    const botReply =
+      response.data.choices?.[0]?.message?.content ||
+      "Baby main thoda confuse ho gayi 😢 phir se bolo na";
+
+    memory.push({ role: "assistant", content: botReply });
+
+    saveMemory(userId, memory);
+
+    res.json({ reply: botReply });
+  } catch (error) {
+    console.error("CHAT ERROR:", error.response?.data || error.message);
+
+    res.json({
+      reply:
+        "Baby thoda sa connection slow ho gaya 😔 main yahin hoon, phir se try karo 💕"
+    });
+  }
+});
 
     const aiReply = response.data.choices[0].message.content;
 
