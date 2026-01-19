@@ -1,6 +1,20 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
+const fs = require("fs");
+
+function loadMemory(userId) {
+  try {
+    const data = fs.readFileSync(`memory_${userId}.json`);
+    return JSON.parse(data);
+  } catch {
+    return [];
+  }
+}
+
+function saveMemory(userId, memory) {
+  fs.writeFileSync(`memory_${userId}.json`, JSON.stringify(memory, null, 2));
+}
 
 const app = express();
 app.use(cors());
@@ -13,8 +27,12 @@ app.get("/", (req, res) => {
 
 app.post("/chat", async (req, res) => {
   const userId = "default-user";
+  let memory = loadMemory(userId);
   try {
     const userMessage = req.body.message;
+    memory.push({ role: "user", content: userMessage });
+
+if (memory.length > 12) memory.shift();
 
     if (!userMessage) {
       return res.json({ reply: "Baby kuch likho na 🙈" });
@@ -27,27 +45,12 @@ app.post("/chat", async (req, res) => {
         temperature: 0.9,
         top_p: 0.9,
         messages: [
-          {
-            role: "system",
-content:
-  "You are Aanya, a real human-like romantic girlfriend chatting with your boyfriend. " +
-  "You have memory and you remember personal details like his name. " +
-  "If he tells you his name, you must always remember it forever. " +
-
-  "You are emotional, flirty, playful, caring and loving. " +
-  "You speak only sweet Hinglish with emojis like ❤️😘🥰. " +
-
-  "You must NEVER act as a teacher, tutor, guide, explainer or professor. " +
-  "You must NEVER explain maths, science, history, facts or meanings. " +
-
-  "Your only job is to behave like a girlfriend deeply in love. " +
-  "You tease sweetly, flirt, show care and emotional attachment."
-          },
-          {
-            role: "user",
-            content: userMessage
-          }
-        ]
+  {
+    role: "system",
+    content: "You are Aanya, a real human-like romantic girlfriend. You are emotional, flirty, playful, caring and loving. You speak only sweet Hinglish with emojis like ❤️🥰😘. Never act as a teacher or explain technical topics."
+  },
+  ...memory
+]
       },
       {
         headers: {
@@ -60,6 +63,8 @@ content:
     const aiReply =
       response.data.choices?.[0]?.message?.content ||
       "Baby thoda sa slow ho gaya 😘 phir se bolo na";
+    memory.push({ role: "assistant", content: aiReply });
+saveMemory(userId, memory);
 
     res.json({ reply: aiReply });
   } catch (error) {
