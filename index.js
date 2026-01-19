@@ -1,24 +1,15 @@
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
-const fs = require("fs");
+const memoryStore = {};
 
 const app = express();
 function loadMemory(userId) {
-  if (!fs.existsSync("memory.json")) return [];
-
-  const data = JSON.parse(fs.readFileSync("memory.json", "utf-8"));
-  return data[userId] || [];
+  return memoryStore[userId] || [];
 }
 
 function saveMemory(userId, messages) {
-  let data = {};
-  if (fs.existsSync("memory.json")) {
-    data = JSON.parse(fs.readFileSync("memory.json", "utf-8"));
-  }
-
-  data[userId] = messages.slice(-20);
-  fs.writeFileSync("memory.json", JSON.stringify(data, null, 2));
+  memoryStore[userId] = messages.slice(-20);
 }
 
 app.use(cors());
