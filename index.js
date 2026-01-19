@@ -29,7 +29,7 @@ app.post("/chat", async (req, res) => {
         "Content-Type": "application/json"
       },
       data: {
-        model: "llama3-70b-8192",
+        model: "openai/gpt-oss-20b",
         messages: [
           {
             role: "system",
