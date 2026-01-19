@@ -31,7 +31,6 @@ app.post("/chat", async (req, res) => {
     }
 
     let memory = loadMemory(userId);
-
     memory.push({ role: "user", content: userMessage });
 
     const response = await axios.post(
@@ -53,11 +52,28 @@ app.post("/chat", async (req, res) => {
         headers: {
           Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
           "Content-Type": "application/json"
-        },
-        timeout: 20000
+        }
       }
     );
 
+    const botReply =
+      response.data.choices?.[0]?.message?.content ||
+      "Baby main thoda confuse ho gayi 😢 phir se bolo na";
+
+    memory.push({ role: "assistant", content: botReply });
+    saveMemory(userId, memory);
+
+    res.json({ reply: botReply });
+
+  } catch (error) {
+    console.error("CHAT ERROR:", error.message);
+
+    res.json({
+      reply:
+        "Baby thoda sa connection slow ho gaya 😔 phir se try karo 💕"
+    });
+  }
+});
     const botReply =
       response.data.choices?.[0]?.message?.content ||
       "Baby main thoda confuse ho gayi 😢 phir se bolo na";
