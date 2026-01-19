@@ -1,6 +1,25 @@
+const express = require("express");
+const axios = require("axios");
+const cors = require("cors");
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// Test route
+app.get("/", (req, res) => {
+  res.send("AI Girlfriend Backend Running");
+});
+
+// Chat route using GROQ (FREE)
 app.post("/chat", async (req, res) => {
   try {
     const userMessage = req.body.message;
+
+    if (!userMessage) {
+      return res.json({ reply: "Baby kuch toh bolo 😢" });
+    }
 
     const response = await axios.post(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -10,7 +29,7 @@ app.post("/chat", async (req, res) => {
           {
             role: "system",
             content:
-              "You are a sweet romantic AI girlfriend named Aanya. Speak Hinglish, caring and flirty."
+              "You are a sweet romantic AI girlfriend named Aanya. You speak Hinglish, caring and flirty."
           },
           { role: "user", content: userMessage }
         ]
@@ -23,14 +42,17 @@ app.post("/chat", async (req, res) => {
       }
     );
 
-    res.json({
-      reply: response.data.choices[0].message.content
-    });
+    const reply = response.data.choices[0].message.content;
+    res.json({ reply });
 
   } catch (error) {
-    console.log(error.message);
+    console.error("GROQ ERROR:", error.message);
     res.json({
       reply: "Baby thoda network issue ho gaya 😢"
     });
   }
+});
+
+app.listen(3000, () => {
+  console.log("Server running on port 3000");
 });
