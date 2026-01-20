@@ -80,7 +80,7 @@ app.post("/chat", async (req, res) => {
     model: "openai/gpt-oss-20b",
     temperature: 0.9,
     top_p: 0.9,
-    max_tokens: 70,
+    max_tokens: 150,
     messages: [
       {
         role: "system",
