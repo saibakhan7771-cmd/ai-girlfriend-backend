@@ -92,9 +92,9 @@ immediately correct yourself and reply again SHORT and in Hinglish.
       },
       {
         headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          "Content-Type": "application/json"
-        }
+  Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+  "Content-Type": "application/json"
+}
       }
     );
 
