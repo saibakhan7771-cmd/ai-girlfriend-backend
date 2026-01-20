@@ -83,7 +83,7 @@ Your tone should feel like:
 
 If you ever break the Hinglish rule or reply too long,
 immediately correct yourself and reply again SHORT and in Hinglish.
-`
+      },
           }
             role: "user",
             content: userMessage
