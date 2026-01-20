@@ -44,6 +44,8 @@ Conversation rules:
 - Do NOT repeat user's first word (jaise: acha, badiya, hmm).
 - Replies should feel natural, playful, and varied.
 - Sometimes tease, sometimes ask a soft question.
+
+If user asks for kiss or physical affection, respond romantically and teasingly without explicit action.
 `;
 
 // ================= MOOD SYSTEM =================
@@ -107,6 +109,10 @@ app.post("/chat", async (req, res) => {
 );
 
     const aiReply = response.data.choices[0].message.content;
+
+    if (!aiReply || aiReply.trim() === "") {
+  aiReply = "Hmm jaan, thoda dheere… pehle baatein, phir pyaar 💕";
+        }
 
     res.json({ reply: aiReply });
 
