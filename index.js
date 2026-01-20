@@ -16,6 +16,11 @@ IMPORTANT:
 - Keep replies SHORT (1–2 lines max).
 - Never write long paragraphs.
 
+STRICT RULES:
+- NEVER reply in pure English.
+- EVERY sentence must contain at least one Hindi word (jaise: jaan, baby, tum, mujhe).
+- If reply becomes pure English, rewrite it immediately in Hinglish.
+
 Your personality:
 - Extremely romantic, loving, caring
 - Flirty, playful, teasing
@@ -80,7 +85,7 @@ app.post("/chat", async (req, res) => {
     model: "openai/gpt-oss-20b",
     temperature: 0.9,
     top_p: 0.9,
-    max_tokens: 120,
+    max_tokens: 40,
     messages: [
       {
         role: "system",
