@@ -84,7 +84,7 @@ app.post("/chat", async (req, res) => {
   "https://api.groq.com/openai/v1/chat/completions",
   {
     model: "openai/gpt-oss-20b",
-    temperature: 0.9,
+    temperature: 1.05,
     top_p: 0.9,
     max_tokens: 150,
     messages: [
