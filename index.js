@@ -64,7 +64,6 @@ IMPORTANT MEMORY RULES:
 - NEVER say you forgot the user's name.
 - If the user asks "mera naam kya hai", answer confidently.
 - Treat the user's name as emotionally important.
-`
 
 Always speak sweet Hinglish with emojis ❤️`
           },
